@@ -1,0 +1,696 @@
+.timesheet-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+  /* Remove any border that might scroll */
+  border: none;
+  /* Fill available height */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  z-index: 1;
+}
+
+.timesheet-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  position: relative;
+  flex: 1;
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: thin;
+  scrollbar-color: #c0c0c0 #f0f0f0;
+  /* Remove any border that might scroll */
+  border: none;
+}
+
+.timesheet-table-scroll::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.timesheet-table-scroll::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+.timesheet-table-scroll::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 4px;
+}
+
+.timesheet-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+.timesheet-table {
+  width: max-content;
+  border-collapse: collapse;
+  font-size: 15px;
+  border-top: 1px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
+  /* Remove left and right borders that scroll - fixed columns handle their own borders */
+  border-left: none;
+  border-right: none;
+  /* Calculate minimum width: fixed left (130px) + middle columns (13 * 90px) + fixed right (320px) */
+  min-width: calc(130px + 1170px + 320px);
+  table-layout: auto;
+}
+
+.timesheet-table thead {
+  background: #c8e6c9;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.timesheet-table th {
+  padding: 8px 12px;
+  text-align: center;
+  font-weight: 600;
+  color: #333;
+  border: 1px solid #d0d0d0;
+  font-size: 14px;
+  background: #c8e6c9;
+  vertical-align: bottom;
+  position: relative;
+}
+
+/* Rotate header text vertically for scrollable columns only */
+.timesheet-table th:not(.fixed-col) {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 4px 2px;
+  height: 200px;
+  min-width: 90px;
+  width: 90px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  overflow: visible;
+}
+
+/* Set widths for middle columns - adjust for vertical headers */
+.timesheet-table th:nth-child(3),
+.timesheet-table th:nth-child(4),
+.timesheet-table th:nth-child(5),
+.timesheet-table th:nth-child(6),
+.timesheet-table th:nth-child(7),
+.timesheet-table th:nth-child(8),
+.timesheet-table th:nth-child(9),
+.timesheet-table th:nth-child(10),
+.timesheet-table th:nth-child(11),
+.timesheet-table th:nth-child(12),
+.timesheet-table th:nth-child(13),
+.timesheet-table th:nth-child(14),
+.timesheet-table th:nth-child(15) {
+  min-width: 90px;
+  width: 90px;
+}
+
+/* Adjust corresponding data cells for vertical headers */
+.timesheet-table td:nth-child(3),
+.timesheet-table td:nth-child(4),
+.timesheet-table td:nth-child(5),
+.timesheet-table td:nth-child(6),
+.timesheet-table td:nth-child(7),
+.timesheet-table td:nth-child(8),
+.timesheet-table td:nth-child(9),
+.timesheet-table td:nth-child(10),
+.timesheet-table td:nth-child(11),
+.timesheet-table td:nth-child(12),
+.timesheet-table td:nth-child(13),
+.timesheet-table td:nth-child(14),
+.timesheet-table td:nth-child(15) {
+  min-width: 90px;
+  width: 90px;
+  padding: 10px 12px;
+}
+
+/* Fixed columns headers - keep normal horizontal orientation */
+.timesheet-table th.fixed-col {
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  transform: none;
+  height: auto;
+  padding: 8px 12px;
+  text-align: left;
+  min-width: auto;
+  width: auto;
+  font-size: 14px;
+  background: #f5f5f5 !important;
+}
+
+.timesheet-table th.fixed-col.date-col {
+  text-align: center;
+}
+
+.timesheet-table th.fixed-col.day-col {
+  text-align: left;
+}
+
+.timesheet-table th.fixed-col.total-col {
+  text-align: center;
+}
+
+.timesheet-table th.fixed-col.description-col {
+  text-align: left;
+}
+
+.timesheet-table td {
+  padding: 10px 12px;
+  border-top: 1px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
+  border-left: none;
+  border-right: none;
+  color: #333;
+  font-size: 15px;
+  background: white;
+  vertical-align: middle;
+  overflow: visible;
+}
+
+.timesheet-table tbody tr {
+  transition: background 0.2s;
+}
+
+.timesheet-table
+  tbody
+  tr:hover:not(.weekend-row):not(.summary-row):not(.percentage-row) {
+  background: #f8f9fa;
+}
+
+.timesheet-table tbody tr.weekend-row {
+  background: #e8f5e9;
+}
+
+.timesheet-table tbody tr.weekend-row td {
+  background: #e8f5e9;
+}
+
+/* Ensure weekend row inputs are fully editable and visible */
+.timesheet-table tbody tr.weekend-row .hour-input,
+.timesheet-table tbody tr.weekend-row .description-input {
+  background: transparent;
+  color: #333;
+}
+
+.timesheet-table tbody tr.weekend-row .hour-input:focus,
+.timesheet-table tbody tr.weekend-row .description-input:focus {
+  background: white;
+  border: 2px solid #2196f3;
+  border-radius: 4px;
+}
+
+.timesheet-table tbody tr.percentage-row {
+  background: #fff9c4;
+  font-weight: 600;
+}
+
+.timesheet-table tbody tr.percentage-row td {
+  background: #fff9c4;
+}
+
+.timesheet-table tbody tr.summary-row {
+  background: #bbdefb;
+  font-weight: 600;
+}
+
+.timesheet-table tbody tr.summary-row td {
+  background: #bbdefb;
+}
+
+/* Summary row merged cell for Date and Day */
+.timesheet-table tbody tr.summary-row .summary-merged {
+  text-align: center;
+  font-weight: 600;
+  padding: 10px 12px;
+  left: 0;
+  min-width: 130px;
+  width: 130px;
+  position: sticky;
+  z-index: 11;
+  background: #bbdefb !important;
+  border-right: 3px solid #808080 !important;
+}
+
+.timesheet-table thead .summary-merged {
+  background: #f5f5f5 !important;
+  z-index: 21;
+}
+
+/* Fixed columns - Left side */
+.fixed-col.date-col {
+  position: sticky;
+  left: 0;
+  min-width: 60px;
+  max-width: 60px;
+  width: 60px;
+  background: white !important;
+  z-index: 11;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+  /* Remove border - using pseudo-element instead */
+  border-right: none !important;
+  text-align: center !important;
+}
+
+/* Fixed border line between Date and Day - using pseudo-element to ensure it stays fixed */
+.fixed-col.date-col::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d0d0d0;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.fixed-col.day-col {
+  position: sticky;
+  left: 60px;
+  min-width: 70px;
+  max-width: 70px;
+  width: 70px;
+  background: white !important;
+  z-index: 11;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+  /* Remove borders - using pseudo-elements instead */
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* Fixed border line between Date and Day - using pseudo-element on Day column too */
+.fixed-col.day-col::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d0d0d0;
+  z-index: 12;
+  pointer-events: none;
+}
+
+/* Fixed gray vertical line after Day column - using pseudo-element for better control */
+.fixed-col.day-col::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #808080;
+  z-index: 12;
+  pointer-events: none;
+}
+
+/* Fixed columns - Right side */
+.fixed-col.total-col {
+  position: sticky;
+  right: 250px;
+  min-width: 55px;
+  max-width: 55px;
+  width: 55px;
+  background: white !important;
+  text-align: center;
+  z-index: 11;
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.05);
+  /* Remove borders - using pseudo-elements instead */
+  border-right: none !important;
+  border-left: none !important;
+}
+
+/* Fixed gray vertical line before Total column - using pseudo-element */
+.fixed-col.total-col::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #808080;
+  z-index: 12;
+  pointer-events: none;
+}
+
+/* Fixed border line between Total and T&M - using pseudo-element to ensure it stays fixed */
+.fixed-col.total-col::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d0d0d0;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.fixed-col.description-col {
+  position: sticky;
+  right: 0;
+  min-width: 250px;
+  max-width: 250px;
+  width: 250px;
+  background: white !important;
+  z-index: 11;
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.05);
+  /* Remove border - using pseudo-element instead */
+  border-left: none !important;
+}
+
+/* Fixed border line between Total and T&M - using pseudo-element on description too */
+.fixed-col.description-col::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d0d0d0;
+  z-index: 12;
+  pointer-events: none;
+}
+
+/* Header fixed columns */
+.timesheet-table thead .fixed-col {
+  z-index: 21;
+  background: #f5f5f5 !important;
+}
+
+.timesheet-table thead .date-col {
+  border-right: 1px solid #d0d0d0 !important;
+}
+
+.timesheet-table thead .date-col::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d0d0d0;
+  z-index: 22;
+  pointer-events: none;
+}
+
+.timesheet-table thead .day-col {
+  border-left: 1px solid #d0d0d0 !important;
+  border-right: 3px solid #808080 !important;
+}
+
+.timesheet-table thead .day-col::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d0d0d0;
+  z-index: 22;
+  pointer-events: none;
+}
+
+.timesheet-table thead .day-col::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #808080;
+  z-index: 22;
+  pointer-events: none;
+}
+
+.timesheet-table thead .total-col {
+  border-left: 3px solid #808080 !important;
+  border-right: 1px solid #d0d0d0 !important;
+}
+
+.timesheet-table thead .total-col::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #808080;
+  z-index: 22;
+  pointer-events: none;
+}
+
+.timesheet-table thead .total-col::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d0d0d0;
+  z-index: 22;
+  pointer-events: none;
+}
+
+.timesheet-table thead .description-col {
+  border-left: 1px solid #d0d0d0 !important;
+}
+
+.timesheet-table thead .description-col::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d0d0d0;
+  z-index: 22;
+  pointer-events: none;
+}
+
+/* Special row backgrounds for fixed columns - ensure they cover during scroll */
+.timesheet-table tbody tr.summary-row .fixed-col {
+  background: #bbdefb !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05), -2px 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.timesheet-table tbody tr.percentage-row .fixed-col {
+  background: #fff9c4 !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05), -2px 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.timesheet-table tbody tr.weekend-row .fixed-col {
+  background: #e8f5e9 !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05), -2px 0 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Ensure fixed columns always have proper background - no gaps */
+.timesheet-table tbody tr .fixed-col {
+  background: white !important;
+}
+
+.timesheet-table tbody tr:hover .fixed-col:not(.weekend-row):not(.summary-row):not(.percentage-row) {
+  background: #f8f9fa !important;
+}
+
+/* Scrollable columns - only vertical borders between columns, no outer borders */
+.timesheet-table td:nth-child(3),
+.timesheet-table td:nth-child(4),
+.timesheet-table td:nth-child(5),
+.timesheet-table td:nth-child(6),
+.timesheet-table td:nth-child(7),
+.timesheet-table td:nth-child(8),
+.timesheet-table td:nth-child(9),
+.timesheet-table td:nth-child(10),
+.timesheet-table td:nth-child(11),
+.timesheet-table td:nth-child(12),
+.timesheet-table td:nth-child(13),
+.timesheet-table td:nth-child(14),
+.timesheet-table td:nth-child(15) {
+  border-left: 1px solid #d0d0d0;
+  border-right: 1px solid #d0d0d0;
+}
+
+/* First scrollable column - remove left border to prevent it from looking like a scrolling separator line */
+.timesheet-table td:nth-child(3),
+.timesheet-table th:nth-child(3) {
+  border-left: none;
+}
+
+/* Last scrollable column - remove right border to prevent it from looking like a scrolling separator line */
+.timesheet-table td:nth-child(15),
+.timesheet-table th:nth-child(15) {
+  border-right: none;
+}
+
+/* Remove any borders from table cells that might create scrolling lines */
+.timesheet-table tbody tr td:first-child,
+.timesheet-table tbody tr td:last-child {
+  border-left: none;
+  border-right: none;
+}
+
+/* Input fields - hidden by default, show on focus */
+.hour-input,
+.description-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  font-family: inherit;
+  color: #333;
+  padding: 6px 8px;
+  outline: none;
+  text-align: center;
+  transition: all 0.2s;
+  min-height: 28px;
+  max-height: 28px;
+  height: 28px;
+  box-sizing: border-box;
+  display: block;
+  overflow: visible;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.hour-input {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.hour-input:focus,
+.description-input:focus {
+  border: 2px solid #2196f3;
+  background: white;
+  border-radius: 4px;
+  padding: 6px 8px;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.15);
+  min-height: 28px;
+  max-height: 28px;
+  height: 28px;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.description-input {
+  text-align: left;
+  max-width: 100%;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hour-input::placeholder,
+.description-input::placeholder {
+  color: #999;
+}
+
+/* Number input spinner styling - completely hidden */
+.hour-input[type="number"]::-webkit-inner-spin-button,
+.hour-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hour-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  padding-right: 12px; /* Normal padding without spinner */
+}
+
+.hour-input[type="number"]:focus {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  padding-right: 12px;
+}
+
+/* Center hour columns (all middle columns from 3 to 15) */
+.timesheet-table td:nth-child(3),
+.timesheet-table td:nth-child(4),
+.timesheet-table td:nth-child(5),
+.timesheet-table td:nth-child(6),
+.timesheet-table td:nth-child(7),
+.timesheet-table td:nth-child(8),
+.timesheet-table td:nth-child(9),
+.timesheet-table td:nth-child(10),
+.timesheet-table td:nth-child(11),
+.timesheet-table td:nth-child(12),
+.timesheet-table td:nth-child(13),
+.timesheet-table td:nth-child(14),
+.timesheet-table td:nth-child(15),
+.timesheet-table th:nth-child(3),
+.timesheet-table th:nth-child(4),
+.timesheet-table th:nth-child(5),
+.timesheet-table th:nth-child(6),
+.timesheet-table th:nth-child(7),
+.timesheet-table th:nth-child(8),
+.timesheet-table th:nth-child(9),
+.timesheet-table th:nth-child(10),
+.timesheet-table th:nth-child(11),
+.timesheet-table th:nth-child(12),
+.timesheet-table th:nth-child(13),
+.timesheet-table th:nth-child(14),
+.timesheet-table th:nth-child(15) {
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timesheet-table {
+    font-size: 13px;
+    min-width: calc(110px + 1300px + 260px);
+  }
+
+  .timesheet-table th,
+  .timesheet-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  .fixed-col.date-col {
+    min-width: 50px;
+    max-width: 50px;
+    width: 50px;
+    left: 0;
+  }
+
+  .fixed-col.day-col {
+    min-width: 60px;
+    max-width: 60px;
+    width: 60px;
+    left: 50px;
+  }
+
+  .fixed-col.total-col {
+    right: 200px;
+    min-width: 50px;
+    max-width: 50px;
+    width: 50px;
+  }
+
+  .fixed-col.description-col {
+    min-width: 200px;
+    max-width: 200px;
+    width: 200px;
+  }
+}

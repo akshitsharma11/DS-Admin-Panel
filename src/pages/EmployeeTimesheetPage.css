@@ -1,0 +1,80 @@
+.employee-timesheet-page {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* Prevent page horizontal scroll */
+  overflow-y: hidden; /* Prevent page vertical scroll - only table scrolls */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.filters-section {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  position: relative;
+  z-index: 10000;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+
+.table-section {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden; /* Contain table scroll within this section */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow flex child to shrink */
+  padding-bottom: 0; /* Remove bottom padding */
+  margin-bottom: 0; /* Remove bottom margin */
+  height: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 0;
+  }
+  
+  .filters-section {
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .filters-section .dropdown {
+    width: 100%;
+  }
+}
+
