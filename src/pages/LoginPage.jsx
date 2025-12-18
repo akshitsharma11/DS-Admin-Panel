@@ -52,7 +52,7 @@ export function LoginPage() {
       <div className="login-left-section">
         <div className="login-left-content">
           <img src={logoImage} alt="DS1 Admin Panel" className="login-logo" />
-          <h1 className="login-app-title">DS1 Admin Panel</h1>
+          <h1 className="login-app-title">DS1 Admin App</h1>
         </div>
       </div>
 
