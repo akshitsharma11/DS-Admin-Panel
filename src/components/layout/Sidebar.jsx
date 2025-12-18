@@ -1,10 +1,11 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./Sidebar.css";
 import logoImage from "../../assets/DS Logo 1.png";
 
 export function Sidebar() {
   const [copied, setCopied] = useState(null);
+  const navigate = useNavigate();
 
   const copyToClipboard = async (text, type) => {
     try {
@@ -196,7 +197,10 @@ export function Sidebar() {
           </svg>
           <span>{copied === "android" ? "Copied!" : "Android App Link"}</span>
         </button>
-        <button className="footer-link logout-btn">
+        <button 
+          className="footer-link logout-btn"
+          onClick={() => navigate('/login')}
+        >
           <svg
             width="20"
             height="20"
