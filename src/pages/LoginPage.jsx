@@ -1,17 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../features/auth";
 import "./LoginPage.css";
 import logoImage from "../assets/DS Logo 1.png";
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const { login, validateEmail, error: authError, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
@@ -26,7 +23,7 @@ export function LoginPage() {
 
   const isValidEmail = email.trim() !== "" && validateEmail(email);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email) {
@@ -40,19 +37,21 @@ export function LoginPage() {
     }
 
     setEmailError("");
-    // Handle login logic here
-    console.log("Login:", { email });
-    // Redirect to timesheet page after successful login
-    // TODO: Add API logic here later
-    navigate("/timesheets");
+    const success = await login(email);
+    
+    if (success) {
+      navigate("/timesheets");
+    }
   };
+
+  const displayError = emailError || authError;
 
   return (
     <div className="login-page">
       <div className="login-left-section">
         <div className="login-left-content">
           <img src={logoImage} alt="DS1 Admin Panel" className="login-logo" />
-          <h1 className="login-app-title">DS1 Admin App</h1>
+          <h1 className="login-app-title">DS1 Admin Panel</h1>
         </div>
       </div>
 
@@ -63,7 +62,7 @@ export function LoginPage() {
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
-              <div className={`input-wrapper ${emailError ? "error" : ""}`}>
+              <div className={`input-wrapper ${displayError ? "error" : ""}`}>
                 <svg
                   className="input-icon"
                   viewBox="0 0 24 24"
@@ -101,19 +100,20 @@ export function LoginPage() {
                       setEmailError("");
                     }
                   }}
+                  disabled={isLoading}
                 />
               </div>
-              {emailError && (
-                <span className="error-message">{emailError}</span>
+              {displayError && (
+                <span className="error-message">{displayError}</span>
               )}
             </div>
 
             <button
               type="submit"
               className="login-button"
-              disabled={!isValidEmail}
+              disabled={!isValidEmail || isLoading}
             >
-              Login
+              {isLoading ? 'Logging in...' : 'Login'}
             </button>
           </form>
         </div>

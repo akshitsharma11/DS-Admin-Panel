@@ -1,0 +1,143 @@
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.delete-dialog-content {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: dialogSlideIn 0.2s ease-out;
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.delete-dialog-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.delete-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffebee;
+  border-radius: 50%;
+  color: #d32f2f;
+  margin-bottom: 16px;
+}
+
+.delete-dialog-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.delete-dialog-body {
+  padding: 24px;
+}
+
+.delete-dialog-body p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.delete-dialog-body strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.delete-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+}
+
+.btn-delete-confirm {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #d32f2f;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-delete-confirm:hover {
+  background: #c62828;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+}
+
+.btn-delete-confirm:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .delete-dialog-content {
+    max-width: 100%;
+    margin: 20px;
+  }
+
+  .delete-dialog-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancel,
+  .btn-delete-confirm {
+    width: 100%;
+  }
+}
+

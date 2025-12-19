@@ -1,97 +1,23 @@
-import { useState } from 'react';
 import './ManageJobsPage.css';
-import { JobTable } from '../components/jobs/JobTable';
-import { JobDialog } from '../components/jobs/JobDialog';
-import { DeleteJobDialog } from '../components/jobs/DeleteJobDialog';
-
-// Mock job data - in real app, fetch from API
-const initialJobs = [
-  {
-    id: 1,
-    jobName: 'Project Alpha - Development',
-    status: 'Active',
-  },
-  {
-    id: 2,
-    jobName: 'Project Beta - Testing',
-    status: 'Active',
-  },
-  {
-    id: 3,
-    jobName: 'Project Gamma - Design',
-    status: 'Inactive',
-  },
-  {
-    id: 4,
-    jobName: 'Client Portal - Maintenance',
-    status: 'Active',
-  },
-  {
-    id: 5,
-    jobName: 'Internal Tools - Upgrade',
-    status: 'Inactive',
-  },
-];
+import { useJobs, JobTable, JobDialog, DeleteJobDialog } from '../features/jobs';
 
 export function ManageJobsPage() {
-  const [jobs, setJobs] = useState(initialJobs);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [dialogMode, setDialogMode] = useState('add'); // 'add' or 'edit'
-
-  // Filter jobs based on search query
-  const filteredJobs = jobs.filter((job) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      job.jobName.toLowerCase().includes(query) ||
-      job.status.toLowerCase().includes(query)
-    );
-  });
-
-  const handleAddJob = () => {
-    setSelectedJob(null);
-    setDialogMode('add');
-    setIsDialogOpen(true);
-  };
-
-  const handleEditJob = (job) => {
-    setSelectedJob(job);
-    setDialogMode('edit');
-    setIsDialogOpen(true);
-  };
-
-  const handleDeleteJob = (job) => {
-    setSelectedJob(job);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleSaveJob = (jobData) => {
-    if (dialogMode === 'add') {
-      // Add new job
-      const newJob = {
-        ...jobData,
-        id: jobs.length + 1,
-      };
-      setJobs([...jobs, newJob]);
-    } else {
-      // Update existing job
-      setJobs(
-        jobs.map((job) =>
-          job.id === selectedJob.id ? { ...job, ...jobData } : job
-        )
-      );
-    }
-    setIsDialogOpen(false);
-    setSelectedJob(null);
-  };
-
-  const handleConfirmDelete = () => {
-    setJobs(jobs.filter((job) => job.id !== selectedJob.id));
-    setIsDeleteDialogOpen(false);
-    setSelectedJob(null);
-  };
+  const {
+    jobs,
+    searchQuery,
+    setSearchQuery,
+    isDialogOpen,
+    isDeleteDialogOpen,
+    selectedJob,
+    dialogMode,
+    handleAddJob,
+    handleEditJob,
+    handleDeleteJob,
+    handleSaveJob,
+    handleConfirmDelete,
+    closeDialog,
+    closeDeleteDialog,
+  } = useJobs();
 
   return (
     <div className="manage-jobs-page">
@@ -122,7 +48,7 @@ export function ManageJobsPage() {
 
       <div className="table-section">
         <JobTable
-          jobs={filteredJobs}
+          jobs={jobs}
           onEdit={handleEditJob}
           onDelete={handleDeleteJob}
         />
@@ -132,10 +58,7 @@ export function ManageJobsPage() {
         <JobDialog
           job={selectedJob}
           mode={dialogMode}
-          onClose={() => {
-            setIsDialogOpen(false);
-            setSelectedJob(null);
-          }}
+          onClose={closeDialog}
           onSave={handleSaveJob}
         />
       )}
@@ -143,10 +66,7 @@ export function ManageJobsPage() {
       {isDeleteDialogOpen && (
         <DeleteJobDialog
           job={selectedJob}
-          onClose={() => {
-            setIsDeleteDialogOpen(false);
-            setSelectedJob(null);
-          }}
+          onClose={closeDeleteDialog}
           onConfirm={handleConfirmDelete}
         />
       )}

@@ -1,116 +1,23 @@
-import { useState } from 'react';
 import './ManageUsersPage.css';
-import { UserTable } from '../components/users/UserTable';
-import { UserDialog } from '../components/users/UserDialog';
-import { DeleteConfirmDialog } from '../components/users/DeleteConfirmDialog';
-
-// Mock user data - in real app, fetch from API
-const initialUsers = [
-  {
-    id: 1,
-    shortName: 'Marco D.',
-    fullName: 'Marco Daniels',
-    email: 'marco.daniels@company.com',
-    hourlyRate: 50,
-    role: 'Employee',
-    status: 'Active',
-  },
-  {
-    id: 2,
-    shortName: 'Sarah J.',
-    fullName: 'Sarah Johnson',
-    email: 'sarah.johnson@company.com',
-    hourlyRate: 55,
-    role: 'Employee',
-    status: 'Active',
-  },
-  {
-    id: 3,
-    shortName: 'John S.',
-    fullName: 'John Smith',
-    email: 'john.smith@company.com',
-    hourlyRate: 60,
-    role: 'Manager',
-    status: 'Active',
-  },
-  {
-    id: 4,
-    shortName: 'Emily C.',
-    fullName: 'Emily Chen',
-    email: 'emily.chen@company.com',
-    hourlyRate: 50,
-    role: 'Employee',
-    status: 'Inactive',
-  },
-];
+import { useUsers, UserTable, UserDialog, DeleteConfirmDialog } from '../features/users';
 
 export function ManageUsersPage() {
-  const [users, setUsers] = useState(initialUsers);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [dialogMode, setDialogMode] = useState('add'); // 'add' or 'edit'
-
-  // Filter users based on search query
-  const filteredUsers = users.filter((user) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      user.fullName.toLowerCase().includes(query) ||
-      user.email.toLowerCase().includes(query) ||
-      user.role.toLowerCase().includes(query)
-    );
-  });
-
-  const handleAddUser = () => {
-    setSelectedUser(null);
-    setDialogMode('add');
-    setIsDialogOpen(true);
-  };
-
-  const handleEditUser = (user) => {
-    setSelectedUser(user);
-    setDialogMode('edit');
-    setIsDialogOpen(true);
-  };
-
-  const handleDeleteUser = (user) => {
-    setSelectedUser(user);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleSaveUser = (userData) => {
-    if (dialogMode === 'add') {
-      // Add new user
-      const newUser = {
-        ...userData,
-        id: users.length + 1,
-        shortName: `${userData.fullName.split(' ')[0]} ${userData.fullName.split(' ')[1]?.[0] || ''}.`,
-      };
-      setUsers([...users, newUser]);
-    } else {
-      // Update existing user
-      setUsers(
-        users.map((user) =>
-          user.id === selectedUser.id
-            ? {
-                ...user,
-                ...userData,
-                shortName: `${userData.fullName.split(' ')[0]} ${userData.fullName.split(' ')[1]?.[0] || ''}.`,
-              }
-            : user
-        )
-      );
-    }
-    setIsDialogOpen(false);
-    setSelectedUser(null);
-  };
-
-  const handleConfirmDelete = () => {
-    setUsers(users.filter((user) => user.id !== selectedUser.id));
-    setIsDeleteDialogOpen(false);
-    setSelectedUser(null);
-  };
+  const {
+    users,
+    searchQuery,
+    setSearchQuery,
+    isDialogOpen,
+    isDeleteDialogOpen,
+    selectedUser,
+    dialogMode,
+    handleAddUser,
+    handleEditUser,
+    handleDeleteUser,
+    handleSaveUser,
+    handleConfirmDelete,
+    closeDialog,
+    closeDeleteDialog,
+  } = useUsers();
 
   return (
     <div className="manage-users-page">
@@ -142,7 +49,7 @@ export function ManageUsersPage() {
 
       <div className="table-section">
         <UserTable
-          users={filteredUsers}
+          users={users}
           onEdit={handleEditUser}
           onDelete={handleDeleteUser}
         />
@@ -152,10 +59,7 @@ export function ManageUsersPage() {
         <UserDialog
           user={selectedUser}
           mode={dialogMode}
-          onClose={() => {
-            setIsDialogOpen(false);
-            setSelectedUser(null);
-          }}
+          onClose={closeDialog}
           onSave={handleSaveUser}
         />
       )}
@@ -163,10 +67,7 @@ export function ManageUsersPage() {
       {isDeleteDialogOpen && (
         <DeleteConfirmDialog
           user={selectedUser}
-          onClose={() => {
-            setIsDeleteDialogOpen(false);
-            setSelectedUser(null);
-          }}
+          onClose={closeDeleteDialog}
           onConfirm={handleConfirmDelete}
         />
       )}
