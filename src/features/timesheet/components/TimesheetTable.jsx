@@ -18,6 +18,8 @@ const hourColumns = [
   "rmi",
 ];
 
+const version = "new"
+
 export function TimesheetTable({ data, onUpdate }) {
   const [localData, setLocalData] = useState(data);
 
@@ -171,7 +173,87 @@ export function TimesheetTable({ data, onUpdate }) {
 
     return row[column] || "";
   };
-
+  if (version === "old") {
+    return (
+      <div className="timesheet-table-wrapper">
+        <div className="timesheet-table-scroll">
+          <table className="timesheet-table">
+            <thead>
+              <tr>
+                <th className="fixed-col date-col">Date</th>
+                <th className="fixed-col day-col">Day</th>
+                <th>Facility Improvement</th>
+                <th>Training</th>
+                <th>Paid time off - Vacation</th>
+                <th>Project/Operations Management</th>
+                <th>Grace - 11120 Mayton Pl Beverly Hills</th>
+                <th>Sick Time with pay</th>
+                <th>Holiday Paid</th>
+                <th>Administrative</th>
+                <th>Emails & Asana</th>
+                <th>Warranty</th>
+                <th>Machine maintenance</th>
+                <th>Organizational Meeting</th>
+                <th>RMI</th>
+                <th className="fixed-col total-col">Total</th>
+                <th className="fixed-col description-col">T&M Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {localData.map((row, rowIndex) => (
+                <tr
+                  key={rowIndex}
+                  className={
+                    row.isWeekend
+                      ? "weekend-row"
+                      : row.isPercentage
+                        ? "percentage-row"
+                        : row.isSummary
+                          ? "summary-row"
+                          : ""
+                  }
+                >
+                  {row.isSummary ? (
+                    <td className="fixed-col date-col summary-merged" colSpan={2}>
+                      {renderCell(row, "date", rowIndex)}
+                    </td>
+                  ) : (
+                    <>
+                      <td className="fixed-col date-col">
+                        {renderCell(row, "date", rowIndex)}
+                      </td>
+                      <td className="fixed-col day-col">
+                        {renderCell(row, "day", rowIndex)}
+                      </td>
+                    </>
+                  )}
+                  <td>{renderCell(row, "facilityImprovement", rowIndex)}</td>
+                  <td>{renderCell(row, "training", rowIndex)}</td>
+                  <td>{renderCell(row, "paidTimeOffVacation", rowIndex)}</td>
+                  <td>{renderCell(row, "projectManagement", rowIndex)}</td>
+                  <td>{renderCell(row, "grace", rowIndex)}</td>
+                  <td>{renderCell(row, "sickTimeWithPay", rowIndex)}</td>
+                  <td>{renderCell(row, "holidayPaid", rowIndex)}</td>
+                  <td>{renderCell(row, "administrative", rowIndex)}</td>
+                  <td>{renderCell(row, "emailsAsa", rowIndex)}</td>
+                  <td>{renderCell(row, "warranty", rowIndex)}</td>
+                  <td>{renderCell(row, "machineMaintenance", rowIndex)}</td>
+                  <td>{renderCell(row, "organizationalMeeting", rowIndex)}</td>
+                  <td>{renderCell(row, "rmi", rowIndex)}</td>
+                  <td className="fixed-col total-col">
+                    {renderCell(row, "total", rowIndex)}
+                  </td>
+                  <td className="fixed-col description-col">
+                    {renderCell(row, "tmDescription", rowIndex)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="timesheet-table-wrapper">
       <div className="timesheet-table-scroll">
@@ -179,7 +261,11 @@ export function TimesheetTable({ data, onUpdate }) {
           <thead>
             <tr>
               <th className="fixed-col date-col">Date</th>
-              <th className="fixed-col day-col">Day</th>
+              <th className="fixed-col day-col day-col-wrapper">
+                <div className="day-col-inner" style={{ alignItems: 'flex-end' }}>
+                  Day
+                </div>
+              </th>
               <th>Facility Improvement</th>
               <th>Training</th>
               <th>Paid time off - Vacation</th>
@@ -205,10 +291,10 @@ export function TimesheetTable({ data, onUpdate }) {
                   row.isWeekend
                     ? "weekend-row"
                     : row.isPercentage
-                    ? "percentage-row"
-                    : row.isSummary
-                    ? "summary-row"
-                    : ""
+                      ? "percentage-row"
+                      : row.isSummary
+                        ? "summary-row"
+                        : ""
                 }
               >
                 {row.isSummary ? (
@@ -220,8 +306,10 @@ export function TimesheetTable({ data, onUpdate }) {
                     <td className="fixed-col date-col">
                       {renderCell(row, "date", rowIndex)}
                     </td>
-                    <td className="fixed-col day-col">
-                      {renderCell(row, "day", rowIndex)}
+                    <td className="fixed-col day-col day-col-wrapper">
+                      <div className="day-col-inner">
+                        {renderCell(row, "day", rowIndex)}
+                      </div>
                     </td>
                   </>
                 )}

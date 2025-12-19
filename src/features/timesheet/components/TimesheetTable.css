@@ -67,6 +67,37 @@
   position: sticky;
   top: 0;
   z-index: 20;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Fixed borders for thead using pseudo-elements - top, left, right */
+.timesheet-table thead::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: 1px solid #d0d0d0;
+  border-left: 1px solid #d0d0d0;
+  border-right: 1px solid #d0d0d0;
+  z-index: 21;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* Fixed border-bottom for thead using pseudo-element */
+.timesheet-table thead::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #d0d0d0;
+  z-index: 21;
+  pointer-events: none;
 }
 
 .timesheet-table th {
@@ -221,6 +252,15 @@
   background: #fff9c4;
 }
 
+/* Hide border between Date and Day columns for percentage rows */
+.timesheet-table tbody tr.percentage-row .fixed-col.date-col::before {
+  border-right: none;
+}
+
+.timesheet-table tbody tr.percentage-row .fixed-col.day-col-wrapper::before {
+  border-left: none;
+}
+
 .timesheet-table tbody tr.summary-row {
   background: #bbdefb;
   font-weight: 600;
@@ -239,9 +279,39 @@
   min-width: 130px;
   width: 130px;
   position: sticky;
-  z-index: 11;
+  z-index: 16;
   background: #bbdefb !important;
-  border-right: 3px solid #808080 !important;
+  border: none !important;
+}
+
+/* Fixed borders for summary merged cell using pseudo-element */
+.timesheet-table tbody tr.summary-row .summary-merged::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: 1px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
+  border-left: 1px solid #d0d0d0;
+  z-index: 17;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* Fixed border for summary merged cell using pseudo-element */
+.timesheet-table tbody tr.summary-row .summary-merged::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #808080;
+  z-index: 17;
+  pointer-events: none;
+  box-sizing: border-box;
 }
 
 .timesheet-table thead .summary-merged {
@@ -258,14 +328,45 @@
   width: 60px;
   background: white !important;
   z-index: 11;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
-  /* Remove border - using pseudo-element instead */
-  border-right: none !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
   text-align: center !important;
+  border: none !important;
+}
+
+/* Fixed borders for Date column using pseudo-elements */
+.fixed-col.date-col::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: 1px solid #d0d0d0;
+  border-left: 1px solid #d0d0d0;
+  border-right: 1px solid #d0d0d0;
+  z-index: 12;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+th.fixed-col.date-col::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: none;
+  border-bottom: none;
+  border-left: 1px solid #d0d0d0;
+  border-right: 1px solid #d0d0d0;
+  z-index: 12;
+  pointer-events: none;
+  box-sizing: border-box;
 }
 
 /* Fixed border line between Date and Day - using pseudo-element to ensure it stays fixed */
-.fixed-col.date-col::after {
+/* .fixed-col.date-col::after {
   content: '';
   position: absolute;
   right: -1px;
@@ -275,7 +376,7 @@
   background: #d0d0d0;
   z-index: 12;
   pointer-events: none;
-}
+} */
 
 .fixed-col.day-col {
   position: sticky;
@@ -286,13 +387,69 @@
   background: white !important;
   z-index: 11;
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
-  /* Remove borders - using pseudo-elements instead */
-  border-left: none !important;
-  border-right: none !important;
 }
 
+/* Border-bottom is handled by ::after pseudo-element above */
+
+.fixed-col.day-col-wrapper {
+  padding: 0 !important;
+  position: sticky !important;
+  left: 60px !important;
+  /* border: none !important; */
+  border-left: none !important;
+  border-top: 1px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
+  z-index: 11 !important;
+}
+
+/* Fixed borders for Day column using pseudo-elements - same as Date column */
+.fixed-col.day-col-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: 1px solid #d0d0d0;
+  border-left: 1px solid #d0d0d0;
+  /* Right border is the 3px dark border handled by .day-col-inner::after */
+  z-index: 12;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.day-col-inner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  background: inherit;
+  z-index: 12;
+}
+
+/* Fixed border for Day column using pseudo-element */
+.day-col-inner::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #808080;
+  z-index: 13;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+
 /* Fixed border line between Date and Day - using pseudo-element on Day column too */
-.fixed-col.day-col::before {
+/* .fixed-col.day-col::before {
   content: '';
   position: absolute;
   left: -1px;
@@ -302,10 +459,10 @@
   background: #d0d0d0;
   z-index: 12;
   pointer-events: none;
-}
+} */
 
 /* Fixed gray vertical line after Day column - using pseudo-element for better control */
-.fixed-col.day-col::after {
+/* .fixed-col.day-col::after {
   content: '';
   position: absolute;
   right: -3px;
@@ -315,7 +472,7 @@
   background: #808080;
   z-index: 12;
   pointer-events: none;
-}
+} */
 
 /* Fixed columns - Right side */
 .fixed-col.total-col {
@@ -327,7 +484,7 @@
   background: white !important;
   text-align: center;
   z-index: 11;
-  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.05);
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
   /* Remove borders - using pseudo-elements instead */
   border-right: none !important;
   border-left: none !important;
@@ -367,7 +524,7 @@
   width: 250px;
   background: white !important;
   z-index: 11;
-  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.05);
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
   /* Remove border - using pseudo-element instead */
   border-left: none !important;
 }
@@ -389,13 +546,22 @@
 .timesheet-table thead .fixed-col {
   z-index: 21;
   background: #f5f5f5 !important;
+  position: sticky;
 }
 
 .timesheet-table thead .date-col {
-  border-right: 1px solid #d0d0d0 !important;
+  left: 0;
 }
 
-.timesheet-table thead .date-col::after {
+.timesheet-table thead .day-col {
+  left: 60px;
+}
+
+/* .timesheet-table thead .date-col {
+  border-right: 1px solid #d0d0d0 !important;
+} */
+
+/* .timesheet-table thead .date-col::after {
   content: '';
   position: absolute;
   right: -1px;
@@ -405,14 +571,14 @@
   background: #d0d0d0;
   z-index: 22;
   pointer-events: none;
-}
+} */
 
-.timesheet-table thead .day-col {
+/* .timesheet-table thead .day-col {
   border-left: 1px solid #d0d0d0 !important;
   border-right: 3px solid #808080 !important;
-}
+} */
 
-.timesheet-table thead .day-col::before {
+/* .timesheet-table thead .day-col::before {
   content: '';
   position: absolute;
   left: -1px;
@@ -422,9 +588,9 @@
   background: #d0d0d0;
   z-index: 22;
   pointer-events: none;
-}
+} */
 
-.timesheet-table thead .day-col::after {
+/* .timesheet-table thead .day-col::after {
   content: '';
   position: absolute;
   right: -3px;
@@ -434,14 +600,14 @@
   background: #808080;
   z-index: 22;
   pointer-events: none;
-}
+} */
 
-.timesheet-table thead .total-col {
+/* .timesheet-table thead .total-col {
   border-left: 3px solid #808080 !important;
   border-right: 1px solid #d0d0d0 !important;
-}
+} */
 
-.timesheet-table thead .total-col::before {
+/* .timesheet-table thead .total-col::before {
   content: '';
   position: absolute;
   left: -3px;
@@ -463,11 +629,11 @@
   background: #d0d0d0;
   z-index: 22;
   pointer-events: none;
-}
+} */
 
-.timesheet-table thead .description-col {
+/* .timesheet-table thead .description-col {
   border-left: 1px solid #d0d0d0 !important;
-}
+} */
 
 .timesheet-table thead .description-col::before {
   content: '';
@@ -507,7 +673,7 @@
 }
 
 /* Scrollable columns - only vertical borders between columns, no outer borders */
-.timesheet-table td:nth-child(3),
+/* .timesheet-table td:nth-child(3),
 .timesheet-table td:nth-child(4),
 .timesheet-table td:nth-child(5),
 .timesheet-table td:nth-child(6),
@@ -522,7 +688,7 @@
 .timesheet-table td:nth-child(15) {
   border-left: 1px solid #d0d0d0;
   border-right: 1px solid #d0d0d0;
-}
+} */
 
 /* First scrollable column - remove left border to prevent it from looking like a scrolling separator line */
 .timesheet-table td:nth-child(3),
@@ -537,11 +703,11 @@
 }
 
 /* Remove any borders from table cells that might create scrolling lines */
-.timesheet-table tbody tr td:first-child,
+/* .timesheet-table tbody tr td:first-child,
 .timesheet-table tbody tr td:last-child {
   border-left: none;
   border-right: none;
-}
+} */
 
 /* Input fields - hidden by default, show on focus */
 .hour-input,
@@ -654,6 +820,19 @@
   text-align: center;
 }
 
+.timesheet-table tbody tr.summary-row td:nth-child(2) {
+  text-align: center;
+}
+
+.timesheet-table {
+  border-collapse: collapse; /* removes spacing */
+}
+
+.timesheet-table td,
+.timesheet-table th {
+  border: 1px solid #d0d0d0;
+  padding: 0; /* cell padding 0 */
+}
 /* Responsive */
 @media (max-width: 768px) {
   .timesheet-table {
