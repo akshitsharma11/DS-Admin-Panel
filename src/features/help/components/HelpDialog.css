@@ -1,0 +1,398 @@
+/* Import actual page styles - these will be loaded from the pages */
+/* Note: Dialog styles are imported via JSX imports in HelpDialog.jsx */
+
+.help-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.help-dialog-content {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: helpDialogSlideIn 0.3s ease-out;
+  overflow: hidden;
+  position: relative;
+}
+
+@keyframes helpDialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.help-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px;
+  border-bottom: 2px solid #e0e0e0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  flex-shrink: 0;
+}
+
+.help-dialog-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.help-dialog-title-section h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+}
+
+.step-indicator {
+  font-size: 14px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.btn-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.help-dialog-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 28px;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  min-height: 0;
+}
+
+.flow-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+}
+
+.flow-ui-container {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  position: relative;
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+  /* Ensure annotations can overflow */
+  overflow: visible;
+}
+
+/* Fix scroll for timesheet and other content */
+.flow-ui-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.flow-ui-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.flow-ui-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.flow-ui-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Container styles for preview - actual page styles are used directly */
+.help-ui-preview {
+  width: 100%;
+  position: relative;
+  min-height: 200px;
+}
+
+.help-ui-preview .login-page {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.help-ui-preview .employee-timesheet-page,
+.help-ui-preview .manage-users-page,
+.help-ui-preview .manage-jobs-page {
+  width: 100%;
+  position: relative;
+}
+
+.help-ui-preview .table-section {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto;
+  position: relative;
+  margin-top: 16px;
+}
+
+/* Dialog preview styling - make it look better */
+.help-ui-preview .dialog-overlay {
+  position: relative !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 40px 20px !important;
+  border-radius: 8px !important;
+  min-height: 400px !important;
+  margin: 0 !important;
+}
+
+.help-ui-preview .dialog-content,
+.help-ui-preview .delete-dialog-content {
+  position: relative !important;
+  max-width: 500px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Ensure annotations don't get cut off */
+.help-dialog-body {
+  overflow: visible;
+}
+
+.flow-info {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.flow-info h3 {
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+
+.flow-description {
+  margin: 0 0 20px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #666;
+}
+
+.flow-features {
+  margin-bottom: 20px;
+}
+
+.flow-features h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.flow-features ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.flow-features li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+  position: relative;
+  padding-left: 24px;
+}
+
+.flow-features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.flow-route {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #666;
+}
+
+.flow-route code {
+  background: #e0e0e0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.flow-progress {
+  margin-top: 0;
+  padding-top: 24px;
+  border-top: 2px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.progress-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #e0e0e0;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.progress-dot:hover {
+  border-color: #667eea;
+  transform: scale(1.2);
+}
+
+.progress-dot.active {
+  background: #667eea;
+  border-color: #667eea;
+  width: 32px;
+  border-radius: 6px;
+}
+
+.help-dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  border-top: 2px solid #e0e0e0;
+  background: white;
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+.btn-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  background: white;
+  color: #667eea;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-nav:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #e0e0e0;
+  color: #999;
+}
+
+.btn-nav svg {
+  flex-shrink: 0;
+}
+
+/* Better spacing for annotations */
+.annotation-highlight {
+  position: relative;
+  z-index: 1;
+  margin: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .help-dialog-content {
+    max-width: 100%;
+    max-height: 95vh;
+    margin: 10px;
+  }
+
+  .help-dialog-header {
+    padding: 20px;
+  }
+
+  .help-dialog-body {
+    padding: 20px;
+  }
+
+  .flow-content {
+    gap: 16px;
+  }
+
+  .flow-ui-container {
+    max-height: 400px;
+    padding: 16px;
+  }
+
+  .help-dialog-footer {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .btn-nav {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,10 +1,12 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { HelpDialog } from "../../features/help";
 import "./Sidebar.css";
 import logoImage from "../../assets/DS Logo 1.png";
 
 export function Sidebar() {
   const [copied, setCopied] = useState(null);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const navigate = useNavigate();
 
   const copyToClipboard = async (text, type) => {
@@ -135,6 +137,40 @@ export function Sidebar() {
       <div className="sidebar-footer">
         <button
           className="footer-link"
+          onClick={() => setIsHelpOpen(true)}
+          title="View App Flow Guide"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+            <path
+              d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <path
+              d="M12 17h.01"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+          <span>Help</span>
+        </button>
+        <button
+          className="footer-link"
           onClick={handleIOSLink}
           title="Click to copy iOS App Link"
         >
@@ -234,6 +270,8 @@ export function Sidebar() {
         </button>
         <div className="user-info">Logged in as Admin User</div>
       </div>
+
+      {isHelpOpen && <HelpDialog onClose={() => setIsHelpOpen(false)} />}
     </aside>
   );
 }
