@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { HelpDialog } from "../../features/help";
+import { useAuth } from "../../features/auth";
 import "./Sidebar.css";
 import logoImage from "../../assets/DS Logo 1.png";
 
@@ -8,6 +9,7 @@ export function Sidebar() {
   const [copied, setCopied] = useState(null);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const navigate = useNavigate();
+  const { logout, user } = useAuth();
 
   const copyToClipboard = async (text, type) => {
     try {
@@ -235,7 +237,10 @@ export function Sidebar() {
         </button>
         <button 
           className="footer-link logout-btn"
-          onClick={() => navigate('/login')}
+          onClick={async () => {
+            await logout();
+            navigate('/login');
+          }}
         >
           <svg
             width="20"
@@ -268,7 +273,9 @@ export function Sidebar() {
           </svg>
           <span>Logout</span>
         </button>
-        <div className="user-info">Logged in as Admin User</div>
+        <div className="user-info">
+          Logged in as {user?.name || 'Admin User'}
+        </div>
       </div>
 
       {isHelpOpen && <HelpDialog onClose={() => setIsHelpOpen(false)} />}

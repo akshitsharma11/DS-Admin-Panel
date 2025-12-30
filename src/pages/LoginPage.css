@@ -165,31 +165,50 @@
   margin-top: 12px;
   box-shadow: 0 2px 8px rgba(66, 165, 245, 0.2);
   min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.login-button:hover {
+.login-button:hover:not(:disabled) {
   background: #1e88e5;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(66, 165, 245, 0.4);
 }
 
-.login-button:active {
+.login-button:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(66, 165, 245, 0.3);
 }
 
 .login-button:disabled {
   background: #b0b0b0;
-  cursor: not-allowed;
+  cursor: wait;
   transform: none;
   box-shadow: none;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .login-button:disabled:hover {
   background: #b0b0b0;
   transform: none;
   box-shadow: none;
+}
+
+.login-button .btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive */

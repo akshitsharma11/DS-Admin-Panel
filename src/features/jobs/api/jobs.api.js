@@ -1,16 +1,19 @@
 import { httpClient } from '../../../services/http';
+import { JOBS_ENDPOINTS } from '../../../app/config/apiEndpoints.js';
 
 /**
- * Jobs API endpoints
+ * Jobs API service
+ * All endpoints are defined in apiEndpoints.js
  */
 export const jobsApi = {
   /**
    * Get all jobs
-   * @returns {Promise} Jobs list
+   * @returns {Promise} Jobs list with status and jobsData
    */
   getJobs: async () => {
-    const response = await httpClient.get('/jobs');
-    return response.data;
+    const response = await httpClient.post(JOBS_ENDPOINTS.GET_ALL);
+    // Return the jobsData array from the response
+    return response.data?.jobsData || [];
   },
 
   /**
@@ -19,7 +22,7 @@ export const jobsApi = {
    * @returns {Promise} Job data
    */
   getJobById: async (jobId) => {
-    const response = await httpClient.get(`/jobs/${jobId}`);
+    const response = await httpClient.get(JOBS_ENDPOINTS.GET_BY_ID(jobId));
     return response.data;
   },
 
@@ -29,18 +32,17 @@ export const jobsApi = {
    * @returns {Promise} Created job
    */
   createJob: async (jobData) => {
-    const response = await httpClient.post('/jobs', jobData);
+    const response = await httpClient.post(JOBS_ENDPOINTS.CREATE, jobData);
     return response.data;
   },
 
   /**
    * Update job
-   * @param {number} jobId - Job ID
-   * @param {object} jobData - Updated job data
+   * @param {object} jobData - Updated job data (includes jobName, jobId, active as string)
    * @returns {Promise} Updated job
    */
-  updateJob: async (jobId, jobData) => {
-    const response = await httpClient.put(`/jobs/${jobId}`, jobData);
+  updateJob: async (jobData) => {
+    const response = await httpClient.post(JOBS_ENDPOINTS.UPDATE, jobData);
     return response.data;
   },
 
@@ -50,7 +52,7 @@ export const jobsApi = {
    * @returns {Promise} Deletion result
    */
   deleteJob: async (jobId) => {
-    const response = await httpClient.delete(`/jobs/${jobId}`);
+    const response = await httpClient.delete(JOBS_ENDPOINTS.DELETE(jobId));
     return response.data;
   },
 };

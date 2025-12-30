@@ -7,7 +7,8 @@ export function Dropdown({
   onChange, 
   placeholder = 'Select...',
   icon,
-  className = ''
+  className = '',
+  disabled = false
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -26,11 +27,12 @@ export function Dropdown({
   const selectedOption = options.find(opt => opt.value === value);
 
   return (
-    <div className={`dropdown ${className}`} ref={dropdownRef}>
+    <div className={`dropdown ${className} ${disabled ? 'disabled' : ''}`} ref={dropdownRef}>
       <button 
         className="dropdown-trigger"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => !disabled && options.length > 0 && setIsOpen(!isOpen)}
         type="button"
+        disabled={disabled || options.length === 0}
       >
         {icon && <span className="dropdown-icon">{icon}</span>}
         <span className="dropdown-value">

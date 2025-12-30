@@ -6,10 +6,10 @@ export function setupInterceptors(axiosInstance) {
   // Request interceptor
   axiosInstance.interceptors.request.use(
     (config) => {
-      // Add auth token if available
-      const token = localStorage.getItem('token');
+      // Add x-access-token if available
+      const token = localStorage.getItem('x-access-token');
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers['x-access-token'] = token;
       }
       return config;
     },
@@ -27,8 +27,11 @@ export function setupInterceptors(axiosInstance) {
       // Handle common errors
       if (error.response?.status === 401) {
         // Handle unauthorized - clear token and redirect to login
-        localStorage.removeItem('token');
-        // You can add navigation logic here if needed
+        localStorage.removeItem('x-access-token');
+        // Redirect to login page
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
       }
       return Promise.reject(error);
     }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth";
+import { InlineLoader } from "../components/ui/Loader";
 import "./LoginPage.css";
 import logoImage from "../assets/DS Logo 1.png";
 
@@ -113,7 +114,14 @@ export function LoginPage() {
               className="login-button"
               disabled={!isValidEmail || isLoading}
             >
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? (
+                <>
+                  <div className="btn-spinner"></div>
+                  <span>Logging in...</span>
+                </>
+              ) : (
+                'Login'
+              )}
             </button>
           </form>
         </div>

@@ -2,31 +2,34 @@ import { useState, useEffect } from "react";
 import { FormDialog } from "../../../components/ui/FormDialog";
 import "./UserDialog.css";
 
-export function UserDialog({ user, mode, onClose, onSave }) {
+export function UserDialog({ user, mode, onClose, onSave, isLoading = false }) {
   const [formData, setFormData] = useState({
+    tabName: "",
     fullName: "",
     email: "",
     hourlyRate: "",
-    role: "Employee",
-    status: "Active",
+    role: "",
+    status: "ACTIVE",
   });
 
   useEffect(() => {
     if (user) {
       setFormData({
+        tabName: user.shortName || "",
         fullName: user.fullName || "",
         email: user.email || "",
         hourlyRate: user.hourlyRate || "",
-        role: user.role || "Employee",
-        status: user.status || "Active",
+        role: user.role || "",
+        status: user.status || "ACTIVE",
       });
     } else {
       setFormData({
+        tabName: "",
         fullName: "",
         email: "",
         hourlyRate: "",
-        role: "Employee",
-        status: "Active",
+        role: "",
+        status: "ACTIVE",
       });
     }
   }, [user]);
@@ -35,7 +38,7 @@ export function UserDialog({ user, mode, onClose, onSave }) {
     e.preventDefault();
     onSave({
       ...formData,
-      hourlyRate: parseFloat(formData.hourlyRate),
+      hourlyRate: parseFloat(formData.hourlyRate) || 0,
     });
   };
 
@@ -48,6 +51,15 @@ export function UserDialog({ user, mode, onClose, onSave }) {
   };
 
   const formFields = [
+    {
+      type: "text",
+      id: "tabName",
+      name: "tabName",
+      label: "Short Name *",
+      value: formData.tabName,
+      placeholder: "Enter short name",
+      required: true,
+    },
     {
       type: "text",
       id: "fullName",
@@ -65,6 +77,7 @@ export function UserDialog({ user, mode, onClose, onSave }) {
       value: formData.email,
       placeholder: "Enter email address",
       required: true,
+      disabled: mode === "edit", // Disable email in edit mode
     },
     {
       type: "number",
@@ -78,16 +91,13 @@ export function UserDialog({ user, mode, onClose, onSave }) {
       step: "0.01",
     },
     {
-      type: "select",
+      type: "text",
       id: "role",
       name: "role",
       label: "Role *",
       value: formData.role,
+      placeholder: "Enter role",
       required: true,
-      options: [
-        { value: "Employee", label: "Employee" },
-        { value: "Manager", label: "Manager" },
-      ],
     },
     {
       type: "select",
@@ -97,8 +107,8 @@ export function UserDialog({ user, mode, onClose, onSave }) {
       value: formData.status,
       required: true,
       options: [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" },
+        { value: "ACTIVE", label: "Active" },
+        { value: "INACTIVE", label: "Inactive" },
       ],
     },
   ];
@@ -111,6 +121,7 @@ export function UserDialog({ user, mode, onClose, onSave }) {
       submitLabel={mode === "add" ? "Add User" : "Save Changes"}
       formFields={formFields}
       onChange={handleChange}
+      isLoading={isLoading}
     />
   );
 }

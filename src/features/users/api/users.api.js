@@ -1,16 +1,19 @@
 import { httpClient } from "../../../services/http";
+import { USERS_ENDPOINTS } from "../../../app/config/apiEndpoints.js";
 
 /**
- * Users API endpoints
+ * Users API service
+ * All endpoints are defined in apiEndpoints.js
  */
 export const usersApi = {
   /**
    * Get all users
-   * @returns {Promise} Users list
+   * @returns {Promise} Users list with status and data
    */
   getUsers: async () => {
-    const response = await httpClient.get("/users");
-    return response.data;
+    const response = await httpClient.post(USERS_ENDPOINTS.GET_ALL);
+    // Return the data array from the response
+    return response.data?.data || [];
   },
 
   /**
@@ -19,28 +22,27 @@ export const usersApi = {
    * @returns {Promise} User data
    */
   getUserById: async (userId) => {
-    const response = await httpClient.get(`/users/${userId}`);
+    const response = await httpClient.get(USERS_ENDPOINTS.GET_BY_ID(userId));
     return response.data;
   },
 
   /**
    * Create new user
-   * @param {object} userData - User data
+   * @param {object} userData - User data (includes email, tabName, name, role, hourlyRate, userStatus)
    * @returns {Promise} Created user
    */
   createUser: async (userData) => {
-    const response = await httpClient.post("/users", userData);
+    const response = await httpClient.post(USERS_ENDPOINTS.CREATE, userData);
     return response.data;
   },
 
   /**
    * Update user
-   * @param {number} userId - User ID
-   * @param {object} userData - Updated user data
+   * @param {object} userData - Updated user data (includes email, tabName, name, role, hourlyRate, userStatus)
    * @returns {Promise} Updated user
    */
-  updateUser: async (userId, userData) => {
-    const response = await httpClient.put(`/users/${userId}`, userData);
+  updateUser: async (userData) => {
+    const response = await httpClient.post(USERS_ENDPOINTS.UPDATE, userData);
     return response.data;
   },
 
@@ -50,7 +52,7 @@ export const usersApi = {
    * @returns {Promise} Deletion result
    */
   deleteUser: async (userId) => {
-    const response = await httpClient.delete(`/users/${userId}`);
+    const response = await httpClient.delete(USERS_ENDPOINTS.DELETE(userId));
     return response.data;
   },
 };

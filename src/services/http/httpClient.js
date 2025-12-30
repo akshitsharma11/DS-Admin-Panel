@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { setupInterceptors } from './interceptors.js';
+import { API_BASE_URL } from '../../app/config/env.js';
 
 const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

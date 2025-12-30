@@ -1,22 +1,20 @@
 import './ManageUsersPage.css';
-import { useUsers, UserTable, UserDialog, DeleteConfirmDialog } from '../features/users';
+import { useUsers, UserTable, UserDialog } from '../features/users';
 
 export function ManageUsersPage() {
   const {
     users,
+    isLoading,
+    isSaving,
     searchQuery,
     setSearchQuery,
     isDialogOpen,
-    isDeleteDialogOpen,
     selectedUser,
     dialogMode,
     handleAddUser,
     handleEditUser,
-    handleDeleteUser,
     handleSaveUser,
-    handleConfirmDelete,
     closeDialog,
-    closeDeleteDialog,
   } = useUsers();
 
   return (
@@ -24,7 +22,7 @@ export function ManageUsersPage() {
       <div className="page-header-single-line">
         <h1 className="page-title">User Management</h1>
         <div className="header-right-section">
-          <div className="search-input-wrapper">
+          <div className={`search-input-wrapper ${searchQuery ? 'has-value' : ''}`}>
             <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
               <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -36,6 +34,18 @@ export function ManageUsersPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+            {searchQuery && (
+              <button
+                className="clear-search-btn"
+                onClick={() => setSearchQuery('')}
+                type="button"
+                title="Clear search"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            )}
           </div>
           <button className="btn-add-user" onClick={handleAddUser}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,7 +61,7 @@ export function ManageUsersPage() {
         <UserTable
           users={users}
           onEdit={handleEditUser}
-          onDelete={handleDeleteUser}
+          isLoading={isLoading}
         />
       </div>
 
@@ -61,14 +71,7 @@ export function ManageUsersPage() {
           mode={dialogMode}
           onClose={closeDialog}
           onSave={handleSaveUser}
-        />
-      )}
-
-      {isDeleteDialogOpen && (
-        <DeleteConfirmDialog
-          user={selectedUser}
-          onClose={closeDeleteDialog}
-          onConfirm={handleConfirmDelete}
+          isLoading={isSaving}
         />
       )}
     </div>

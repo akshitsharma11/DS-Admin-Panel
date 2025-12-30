@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FormDialog } from '../../../components/ui/FormDialog';
 import './JobDialog.css';
 
-export function JobDialog({ job, mode, onClose, onSave }) {
+export function JobDialog({ job, mode, onClose, onSave, isLoading = false }) {
   const [formData, setFormData] = useState({
     jobName: '',
     status: 'Active',
@@ -45,18 +45,20 @@ export function JobDialog({ job, mode, onClose, onSave }) {
       placeholder: 'Enter job name',
       required: true,
     },
-    {
-      type: 'select',
-      id: 'status',
-      name: 'status',
-      label: 'Status *',
-      value: formData.status,
-      required: true,
-      options: [
-        { value: 'Active', label: 'Active' },
-        { value: 'Inactive', label: 'Inactive' },
-      ],
-    },
+    ...(mode === 'edit' ? [
+      {
+        type: 'select',
+        id: 'status',
+        name: 'status',
+        label: 'Status *',
+        value: formData.status,
+        required: true,
+        options: [
+          { value: 'Active', label: 'Active' },
+          { value: 'Inactive', label: 'Inactive' },
+        ],
+      },
+    ] : []),
   ];
 
   return (
@@ -67,6 +69,7 @@ export function JobDialog({ job, mode, onClose, onSave }) {
       submitLabel={mode === 'add' ? 'Add Job' : 'Save Changes'}
       formFields={formFields}
       onChange={handleChange}
+      isLoading={isLoading}
     />
   );
 }

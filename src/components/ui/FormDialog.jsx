@@ -13,6 +13,7 @@ export function FormDialog({
   formFields = [],
   onChange,
   children,
+  isLoading = false,
 }) {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,8 +36,11 @@ export function FormDialog({
 
         <form onSubmit={handleSubmit} className="dialog-form">
           {children || formFields.map((field) => (
-            <div key={field.id || field.name} className="form-group">
-              <label htmlFor={field.id || field.name}>{field.label}</label>
+            <div key={field.id || field.name} className={`form-group ${field.disabled ? 'field-disabled' : ''}`}>
+              <label htmlFor={field.id || field.name}>
+                {field.label}
+                {field.disabled && <span className="read-only-indicator"> (Read-only)</span>}
+              </label>
               {field.type === 'select' ? (
                 <select
                   id={field.id || field.name}
@@ -71,11 +75,27 @@ export function FormDialog({
           ))}
 
           <div className="dialog-actions">
-            <button type="button" className="btn-cancel" onClick={onClose}>
+            <button 
+              type="button" 
+              className="btn-cancel" 
+              onClick={onClose}
+              disabled={isLoading}
+            >
               {cancelLabel}
             </button>
-            <button type="submit" className="btn-save">
-              {submitLabel}
+            <button 
+              type="submit" 
+              className="btn-save"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <div className="btn-spinner"></div>
+                  <span>Processing...</span>
+                </>
+              ) : (
+                submitLabel
+              )}
             </button>
           </div>
         </form>

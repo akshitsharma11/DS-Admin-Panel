@@ -1,57 +1,48 @@
-import { useState, useMemo } from 'react';
-// import { usersApi } from '../api/users.api';
+import { useState, useMemo, useEffect } from 'react';
+import { usersApi } from '../api/users.api';
+import { useSnackbar } from '../../../contexts/SnackbarContext';
 
 /**
  * Hook for managing users data and operations
- * Currently uses mock data - replace with API calls when backend is ready
  */
 export function useUsers() {
-  // Mock data - in real app, fetch from API
-  const initialUsers = [
-    {
-      id: 1,
-      shortName: 'Marco D.',
-      fullName: 'Marco Daniels',
-      email: 'marco.daniels@company.com',
-      hourlyRate: 50,
-      role: 'Employee',
-      status: 'Active',
-    },
-    {
-      id: 2,
-      shortName: 'Sarah J.',
-      fullName: 'Sarah Johnson',
-      email: 'sarah.johnson@company.com',
-      hourlyRate: 55,
-      role: 'Employee',
-      status: 'Active',
-    },
-    {
-      id: 3,
-      shortName: 'John S.',
-      fullName: 'John Smith',
-      email: 'john.smith@company.com',
-      hourlyRate: 60,
-      role: 'Manager',
-      status: 'Active',
-    },
-    {
-      id: 4,
-      shortName: 'Emily C.',
-      fullName: 'Emily Chen',
-      email: 'emily.chen@company.com',
-      hourlyRate: 50,
-      role: 'Employee',
-      status: 'Inactive',
-    },
-  ];
-
-  const [users, setUsers] = useState(initialUsers);
+  const { success, error: showError } = useSnackbar();
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [dialogMode, setDialogMode] = useState('add'); // 'add' or 'edit'
+
+  // Fetch users from API on component mount
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setIsLoading(true);
+      try {
+        const usersData = await usersApi.getUsers();
+        // Map API response to table format
+        const mappedUsers = usersData.map((user) => ({
+          _id: user._id,
+          shortName: user.tabName || '',
+          fullName: user.name || '',
+          email: user.user_email || '',
+          hourlyRate: user.hourlyRate || 0,
+          role: user.role || '',
+          status: user.userStatus || 'ACTIVE',
+        }));
+        setUsers(mappedUsers);
+      } catch (err) {
+        const errorMessage = err.response?.data?.description || err.message || 'Failed to fetch users';
+        showError(errorMessage);
+        console.error('Error fetching users:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [showError]);
 
   // Filter users based on search query
   const filteredUsers = useMemo(() => {
@@ -62,7 +53,8 @@ export function useUsers() {
       return (
         user.fullName.toLowerCase().includes(query) ||
         user.email.toLowerCase().includes(query) ||
-        user.role.toLowerCase().includes(query)
+        user.role.toLowerCase().includes(query) ||
+        user.shortName.toLowerCase().includes(query)
       );
     });
   }, [users, searchQuery]);
@@ -79,47 +71,73 @@ export function useUsers() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteUser = (user) => {
-    setSelectedUser(user);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleSaveUser = (userData) => {
-    if (dialogMode === 'add') {
-      // Add new user
-      const newUser = {
-        ...userData,
-        id: users.length + 1,
-        shortName: `${userData.fullName.split(' ')[0]} ${userData.fullName.split(' ')[1]?.[0] || ''}.`,
-      };
-      setUsers([...users, newUser]);
-      // TODO: Replace with API call
-      // await usersApi.createUser(newUser);
-    } else {
-      // Update existing user
-      const updatedUsers = users.map((user) =>
-        user.id === selectedUser.id
-          ? {
-              ...user,
-              ...userData,
-              shortName: `${userData.fullName.split(' ')[0]} ${userData.fullName.split(' ')[1]?.[0] || ''}.`,
-            }
-          : user
-      );
-      setUsers(updatedUsers);
-      // TODO: Replace with API call
-      // await usersApi.updateUser(selectedUser.id, userData);
+  const handleSaveUser = async (userData) => {
+    setIsSaving(true);
+    try {
+      if (dialogMode === 'add') {
+        // Add new user
+        // Map form data to API format
+        const apiData = {
+          tabName: userData.tabName,
+          name: userData.fullName,
+          role: userData.role,
+          hourlyRate: userData.hourlyRate,
+          userStatus: userData.status,
+          email: userData.email,
+        };
+        
+        await usersApi.createUser(apiData);
+        
+        // Refresh users list
+        const usersData = await usersApi.getUsers();
+        const mappedUsers = usersData.map((user) => ({
+          _id: user._id,
+          shortName: user.tabName || '',
+          fullName: user.name || '',
+          email: user.user_email || '',
+          hourlyRate: user.hourlyRate || 0,
+          role: user.role || '',
+          status: user.userStatus || 'ACTIVE',
+        }));
+        setUsers(mappedUsers);
+        success('User created successfully');
+      } else {
+        // Update existing user
+        // Map form data to API format
+        const apiData = {
+          tabName: userData.tabName,
+          name: userData.fullName,
+          role: userData.role,
+          hourlyRate: userData.hourlyRate,
+          userStatus: userData.status,
+          email: selectedUser.email, // Email from selected user (not editable)
+        };
+        
+        await usersApi.updateUser(apiData);
+        
+        // Refresh users list
+        const usersData = await usersApi.getUsers();
+        const mappedUsers = usersData.map((user) => ({
+          _id: user._id,
+          shortName: user.tabName || '',
+          fullName: user.name || '',
+          email: user.user_email || '',
+          hourlyRate: user.hourlyRate || 0,
+          role: user.role || '',
+          status: user.userStatus || 'ACTIVE',
+        }));
+        setUsers(mappedUsers);
+        success('User updated successfully');
+      }
+      setIsDialogOpen(false);
+      setSelectedUser(null);
+    } catch (err) {
+      const errorMessage = err.response?.data?.description || err.message || 'Failed to save user';
+      showError(errorMessage);
+      console.error('Error saving user:', err);
+    } finally {
+      setIsSaving(false);
     }
-    setIsDialogOpen(false);
-    setSelectedUser(null);
-  };
-
-  const handleConfirmDelete = () => {
-    setUsers(users.filter((user) => user.id !== selectedUser.id));
-    // TODO: Replace with API call
-    // await usersApi.deleteUser(selectedUser.id);
-    setIsDeleteDialogOpen(false);
-    setSelectedUser(null);
   };
 
   const closeDialog = () => {
@@ -127,26 +145,19 @@ export function useUsers() {
     setSelectedUser(null);
   };
 
-  const closeDeleteDialog = () => {
-    setIsDeleteDialogOpen(false);
-    setSelectedUser(null);
-  };
-
   return {
     users: filteredUsers,
+    isLoading,
+    isSaving,
     searchQuery,
     setSearchQuery,
     isDialogOpen,
-    isDeleteDialogOpen,
     selectedUser,
     dialogMode,
     handleAddUser,
     handleEditUser,
-    handleDeleteUser,
     handleSaveUser,
-    handleConfirmDelete,
     closeDialog,
-    closeDeleteDialog,
   };
 }
 

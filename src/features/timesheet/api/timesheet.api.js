@@ -1,7 +1,9 @@
 import { httpClient } from '../../../services/http';
+import { TIMESHEET_ENDPOINTS } from '../../../app/config/apiEndpoints.js';
 
 /**
- * Timesheet API endpoints
+ * Timesheet API service
+ * All endpoints are defined in apiEndpoints.js
  */
 export const timesheetApi = {
   /**
@@ -12,7 +14,7 @@ export const timesheetApi = {
    * @returns {Promise} Timesheet data
    */
   getTimesheet: async (employeeId, month, year) => {
-    const response = await httpClient.get('/timesheets', {
+    const response = await httpClient.get(TIMESHEET_ENDPOINTS.GET_ALL, {
       params: { employeeId, month, year },
     });
     return response.data;
@@ -25,7 +27,7 @@ export const timesheetApi = {
    * @returns {Promise} Updated entry
    */
   updateTimesheet: async (entryId, data) => {
-    const response = await httpClient.put(`/timesheets/${entryId}`, data);
+    const response = await httpClient.put(TIMESHEET_ENDPOINTS.UPDATE(entryId), data);
     return response.data;
   },
 
@@ -35,7 +37,17 @@ export const timesheetApi = {
    * @returns {Promise} Created entry
    */
   createTimesheet: async (data) => {
-    const response = await httpClient.post('/timesheets', data);
+    const response = await httpClient.post(TIMESHEET_ENDPOINTS.CREATE, data);
+    return response.data;
+  },
+
+  /**
+   * Delete timesheet entry
+   * @param {string} entryId - Entry ID
+   * @returns {Promise} Deletion result
+   */
+  deleteTimesheet: async (entryId) => {
+    const response = await httpClient.delete(TIMESHEET_ENDPOINTS.DELETE(entryId));
     return response.data;
   },
 };

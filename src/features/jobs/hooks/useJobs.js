@@ -1,51 +1,54 @@
-import { useState, useMemo } from 'react';
-// import { jobsApi } from '../api/jobs.api';
+import { useState, useMemo, useEffect } from "react";
+import { jobsApi } from "../api/jobs.api";
+import { useSnackbar } from "../../../contexts/SnackbarContext";
 
 /**
  * Hook for managing jobs data and operations
- * Currently uses mock data - replace with API calls when backend is ready
  */
 export function useJobs() {
-  // Mock data - in real app, fetch from API
-  const initialJobs = [
-    {
-      id: 1,
-      jobName: 'Project Alpha - Development',
-      status: 'Active',
-    },
-    {
-      id: 2,
-      jobName: 'Project Beta - Testing',
-      status: 'Active',
-    },
-    {
-      id: 3,
-      jobName: 'Project Gamma - Design',
-      status: 'Inactive',
-    },
-    {
-      id: 4,
-      jobName: 'Client Portal - Maintenance',
-      status: 'Active',
-    },
-    {
-      id: 5,
-      jobName: 'Internal Tools - Upgrade',
-      status: 'Inactive',
-    },
-  ];
-
-  const [jobs, setJobs] = useState(initialJobs);
-  const [searchQuery, setSearchQuery] = useState('');
+  const { success, error: showError } = useSnackbar();
+  const [jobs, setJobs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [dialogMode, setDialogMode] = useState('add'); // 'add' or 'edit'
+  const [dialogMode, setDialogMode] = useState("add"); // 'add' or 'edit'
+
+  // Fetch jobs from API on component mount
+  useEffect(() => {
+    const fetchJobs = async () => {
+      setIsLoading(true);
+      try {
+        const jobsData = await jobsApi.getJobs();
+        // Map API response to table format
+        const mappedJobs = jobsData.map((job) => ({
+          _id: job._id,
+          jobName: job.jobName || "",
+          jobId: job.jobId || "",
+          status: job.active ? "Active" : "Inactive",
+          active: job.active || false,
+        }));
+        setJobs(mappedJobs);
+      } catch (err) {
+        const errorMessage =
+          err.response?.data?.description ||
+          err.message ||
+          "Failed to fetch jobs";
+        showError(errorMessage);
+        console.error("Error fetching jobs:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, [showError]);
 
   // Filter jobs based on search query
   const filteredJobs = useMemo(() => {
     if (!searchQuery.trim()) return jobs;
-    
+
     const query = searchQuery.toLowerCase();
     return jobs.filter((job) => {
       return (
@@ -57,50 +60,72 @@ export function useJobs() {
 
   const handleAddJob = () => {
     setSelectedJob(null);
-    setDialogMode('add');
+    setDialogMode("add");
     setIsDialogOpen(true);
   };
 
   const handleEditJob = (job) => {
     setSelectedJob(job);
-    setDialogMode('edit');
+    setDialogMode("edit");
     setIsDialogOpen(true);
   };
 
-  const handleDeleteJob = (job) => {
-    setSelectedJob(job);
-    setIsDeleteDialogOpen(true);
-  };
+  const handleSaveJob = async (jobData) => {
+    setIsSaving(true);
+    try {
+      if (dialogMode === "add") {
+        // Add new job
+        // Map form data to API format
+        const apiData = {
+          jobName: jobData.jobName,
+        };
 
-  const handleSaveJob = (jobData) => {
-    if (dialogMode === 'add') {
-      // Add new job
-      const newJob = {
-        ...jobData,
-        id: jobs.length + 1,
-      };
-      setJobs([...jobs, newJob]);
-      // TODO: Replace with API call
-      // await jobsApi.createJob(newJob);
-    } else {
-      // Update existing job
-      const updatedJobs = jobs.map((job) =>
-        job.id === selectedJob.id ? { ...job, ...jobData } : job
-      );
-      setJobs(updatedJobs);
-      // TODO: Replace with API call
-      // await jobsApi.updateJob(selectedJob.id, jobData);
+        await jobsApi.createJob(apiData);
+
+        // Refresh jobs list
+        const jobsData = await jobsApi.getJobs();
+        const mappedJobs = jobsData.map((job) => ({
+          _id: job._id,
+          jobName: job.jobName || "",
+          jobId: job.jobId || "",
+          status: job.active ? "Active" : "Inactive",
+          active: job.active || false,
+        }));
+        setJobs(mappedJobs);
+        success("Job created successfully");
+      } else {
+        // Update existing job
+        // Map form data to API format
+        const apiData = {
+          jobName: jobData.jobName,
+          jobId: selectedJob.jobId, // jobId from selected job (not editable)
+          active: jobData.status === "Active" ? "true" : "false", // Convert to string
+        };
+
+        await jobsApi.updateJob(apiData);
+
+        // Refresh jobs list
+        const jobsData = await jobsApi.getJobs();
+        const mappedJobs = jobsData.map((job) => ({
+          _id: job._id,
+          jobName: job.jobName || "",
+          jobId: job.jobId || "",
+          status: job.active ? "Active" : "Inactive",
+          active: job.active || false,
+        }));
+        setJobs(mappedJobs);
+        success("Job updated successfully");
+      }
+      setIsDialogOpen(false);
+      setSelectedJob(null);
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.description || err.message || "Failed to save job";
+      showError(errorMessage);
+      console.error("Error saving job:", err);
+    } finally {
+      setIsSaving(false);
     }
-    setIsDialogOpen(false);
-    setSelectedJob(null);
-  };
-
-  const handleConfirmDelete = () => {
-    setJobs(jobs.filter((job) => job.id !== selectedJob.id));
-    // TODO: Replace with API call
-    // await jobsApi.deleteJob(selectedJob.id);
-    setIsDeleteDialogOpen(false);
-    setSelectedJob(null);
   };
 
   const closeDialog = () => {
@@ -108,26 +133,18 @@ export function useJobs() {
     setSelectedJob(null);
   };
 
-  const closeDeleteDialog = () => {
-    setIsDeleteDialogOpen(false);
-    setSelectedJob(null);
-  };
-
   return {
     jobs: filteredJobs,
+    isLoading,
+    isSaving,
     searchQuery,
     setSearchQuery,
     isDialogOpen,
-    isDeleteDialogOpen,
     selectedJob,
     dialogMode,
     handleAddJob,
     handleEditJob,
-    handleDeleteJob,
     handleSaveJob,
-    handleConfirmDelete,
     closeDialog,
-    closeDeleteDialog,
   };
 }
-

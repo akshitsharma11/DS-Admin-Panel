@@ -1,13 +1,10 @@
+import { useState, useEffect } from 'react';
 import { Dropdown } from '../components/ui/Dropdown';
 import { useTimesheet, TimesheetTable } from '../features/timesheet';
+import { usersApi } from '../features/users/api/users.api';
+import { useSnackbar } from '../contexts/SnackbarContext';
+import { TableLoader } from '../components/ui/Loader';
 import './EmployeeTimesheetPage.css';
-
-// Mock employee options - in real app, fetch from API
-const employeeOptions = [
-  { value: '1', label: 'Marco D.' },
-  { value: '2', label: 'John Smith' },
-  { value: '3', label: 'Jane Doe' },
-];
 
 const monthOptions = [
   { value: 1, label: 'January' },
@@ -30,6 +27,10 @@ const yearOptions = Array.from({ length: 10 }, (_, i) => {
 });
 
 export function EmployeeTimesheetPage() {
+  const { error: showError } = useSnackbar();
+  const [employeeOptions, setEmployeeOptions] = useState([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  
   const {
     selectedEmployee,
     setSelectedEmployee,
@@ -41,6 +42,39 @@ export function EmployeeTimesheetPage() {
     handleDataUpdate,
   } = useTimesheet();
 
+  // Fetch users from API
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setIsLoadingUsers(true);
+      try {
+        const usersData = await usersApi.getUsers();
+        // Map users to dropdown options format
+        const options = usersData.map((user) => ({
+          value: user._id,
+          label: user.name || user.tabName || 'Unknown User',
+        }));
+        setEmployeeOptions(options);
+        
+        // Always set first user as default
+        if (options.length > 0) {
+          setSelectedEmployee(options[0].value);
+        }
+      } catch (err) {
+        const errorMessage =
+          err.response?.data?.description ||
+          err.message ||
+          'Failed to fetch users';
+        showError(errorMessage);
+        console.error('Error fetching users:', err);
+      } finally {
+        setIsLoadingUsers(false);
+      }
+    };
+
+    fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="employee-timesheet-page">
       <div className="page-header">
@@ -51,7 +85,8 @@ export function EmployeeTimesheetPage() {
             options={employeeOptions}
             value={selectedEmployee}
             onChange={setSelectedEmployee}
-            placeholder="Select Employee"
+            placeholder={isLoadingUsers ? "Loading users..." : "Select Employee"}
+            disabled={isLoadingUsers}
             icon={
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -83,7 +118,11 @@ export function EmployeeTimesheetPage() {
       </div>
 
       <div className="table-section">
-        <TimesheetTable data={timesheetData} onUpdate={handleDataUpdate} />
+        {isLoadingUsers || !selectedEmployee ? (
+          <TableLoader text="Loading timesheet data..." />
+        ) : (
+          <TimesheetTable data={timesheetData} onUpdate={handleDataUpdate} />
+        )}
       </div>
     </div>
   );
