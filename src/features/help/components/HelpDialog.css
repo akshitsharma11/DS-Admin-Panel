@@ -14,6 +14,7 @@
   z-index: 2000;
   padding: 20px;
   backdrop-filter: blur(4px);
+  overflow: hidden;
 }
 
 .help-dialog-content {
@@ -28,6 +29,8 @@
   animation: helpDialogSlideIn 0.3s ease-out;
   overflow: hidden;
   position: relative;
+  /* Prevent scroll propagation to body */
+  overscroll-behavior: contain;
 }
 
 @keyframes helpDialogSlideIn {
@@ -101,6 +104,8 @@
   gap: 24px;
   position: relative;
   min-height: 0;
+  /* Ensure scrolling works properly */
+  overscroll-behavior: contain;
 }
 
 .flow-content {
@@ -120,8 +125,8 @@
   max-height: 500px;
   overflow-y: auto;
   overflow-x: auto;
-  /* Ensure annotations can overflow */
-  overflow: visible;
+  /* Ensure scrolling works properly */
+  overscroll-behavior: contain;
 }
 
 /* Fix scroll for timesheet and other content */
@@ -182,6 +187,7 @@
   border-radius: 8px !important;
   min-height: 400px !important;
   margin: 0 !important;
+  overflow: visible !important;
 }
 
 .help-ui-preview .dialog-content,
@@ -191,11 +197,21 @@
   width: 100% !important;
   margin: 0 !important;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+  background: white !important;
+  border-radius: 8px !important;
+  overflow: visible !important;
 }
 
-/* Ensure annotations don't get cut off */
-.help-dialog-body {
-  overflow: visible;
+/* Ensure annotations can overflow but don't break scrolling */
+.flow-ui-container .annotation-highlight {
+  position: relative;
+  z-index: 10;
+}
+
+/* Prevent annotations from breaking layout */
+.feature-annotation {
+  pointer-events: none;
+  z-index: 10001;
 }
 
 .flow-info {

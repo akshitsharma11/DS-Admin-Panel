@@ -140,7 +140,7 @@ export function Sidebar() {
         <button
           className="footer-link"
           onClick={() => setIsHelpOpen(true)}
-          title="View App Flow Guide"
+          title="View Tutorial"
         >
           <svg
             width="20"
@@ -169,7 +169,7 @@ export function Sidebar() {
               strokeLinecap="round"
             />
           </svg>
-          <span>Help</span>
+          <span>Tutorial</span>
         </button>
         <button
           className="footer-link"

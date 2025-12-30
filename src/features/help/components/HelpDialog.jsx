@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dropdown } from "../../../components/ui/Dropdown";
 import { UserTable } from "../../users/components/UserTable";
 import { JobTable } from "../../jobs/components/JobTable";
@@ -18,11 +18,19 @@ import "../../../components/ui/DeleteDialog.css";
 import "./HelpDialog.css";
 
 /**
- * Help Dialog Component - Shows complete app flow with actual UI
+ * Tutorial Dialog Component - Shows complete app flow with actual UI
  * Displays real UI components from the application with annotations
  */
 export function HelpDialog({ onClose }) {
   const [currentStep, setCurrentStep] = useState(0);
+
+  // Prevent body scroll when dialog is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   // Sample data for preview
   const sampleEmployeeOptions = [
@@ -1249,12 +1257,22 @@ export function HelpDialog({ onClose }) {
     }
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const handleContentClick = (e) => {
+    e.stopPropagation();
+  };
+
   return (
-    <div className="help-dialog-overlay" onClick={onClose}>
-      <div className="help-dialog-content" onClick={(e) => e.stopPropagation()}>
+    <div className="help-dialog-overlay" onClick={handleOverlayClick}>
+      <div className="help-dialog-content" onClick={handleContentClick}>
         <div className="help-dialog-header">
           <div className="help-dialog-title-section">
-            <h2>App Flow Guide</h2>
+            <h2>Tutorial</h2>
             <span className="step-indicator">
               Step {currentStep + 1} of {totalSteps}
             </span>
