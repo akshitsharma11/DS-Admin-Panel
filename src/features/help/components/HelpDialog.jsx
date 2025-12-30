@@ -195,10 +195,10 @@ export function HelpDialog({ onClose }) {
                 <p className="login-subtitle">Login to Get started</p>
 
                 <form className="login-form">
-                  <div className="form-group" style={{ position: "relative" }}>
+                  <div className="form-group" >
                     <div
                       className="input-wrapper annotation-highlight"
-                      style={{ position: "relative" }}
+                      style={{ position: "relative", zIndex: 10001 }}
                     >
                       <svg
                         className="input-icon"
@@ -236,17 +236,18 @@ export function HelpDialog({ onClose }) {
                     </div>
                   </div>
 
-                  <div style={{ position: "relative" }}>
+                  <div style={{ position: "relative", zIndex: 10002 }}>
                     <button
                       type="button"
                       className="login-button annotation-highlight"
                       disabled
-                      style={{ position: "relative" }}
+                      style={{ position: "relative", opacity: 1 }}
                     >
                       Login
                       <FeatureAnnotation
-                        position="top"
+                        position="left"
                         text="Click to log in. Button activates when valid email is entered. Redirects to timesheet page after login."
+                        style={{ width: '260px' }}
                       />
                     </button>
                   </div>
@@ -274,7 +275,7 @@ export function HelpDialog({ onClose }) {
             className="employee-timesheet-page"
             style={{ position: "relative" }}
           >
-            <div className="page-header">
+            <div className="page-header" style={{ zIndex: 11 }}>
               <h1 className="page-title">Employee Timesheet</h1>
 
               <div className="filters-section" style={{ position: "relative" }}>
@@ -333,8 +334,9 @@ export function HelpDialog({ onClose }) {
                       </svg>
                     </div>
                     <FeatureAnnotation
-                      position="right"
+                      position="bottom"
                       text="Click to select employee. Shows dropdown with all employees. Timesheet updates automatically."
+                      innerStyle={{ width: '150px', minWidth: '100px', maxWidth: '150px' }}
                     />
                   </div>
                 </div>
@@ -395,8 +397,9 @@ export function HelpDialog({ onClose }) {
                       </svg>
                     </div>
                     <FeatureAnnotation
-                      position="right"
+                      position="bottom"
                       text="Select month (January-December). Timesheet table updates to show that month's data."
+                      innerStyle={{ width: '150px', minWidth: '100px', maxWidth: '150px' }}
                     />
                   </div>
                 </div>
@@ -437,8 +440,9 @@ export function HelpDialog({ onClose }) {
                       </svg>
                     </div>
                     <FeatureAnnotation
-                      position="right"
+                      position="bottom"
                       text="Select year. Shows last 10 years. Filters timesheet to that year's data."
+                      innerStyle={{ width: '120px', minWidth: '100px', maxWidth: '120px' }}
                     />
                   </div>
                 </div>
@@ -479,7 +483,7 @@ export function HelpDialog({ onClose }) {
       ui: (
         <div className="help-ui-preview users-preview">
           <div className="manage-users-page" style={{ position: "relative" }}>
-            <div className="page-header-single-line">
+            <div className="page-header-single-line" style={{ zIndex: 11 }}>
               <h1 className="page-title">User Management</h1>
               <div
                 className="header-right-section"
@@ -520,7 +524,7 @@ export function HelpDialog({ onClose }) {
                       readOnly
                     />
                     <FeatureAnnotation
-                      position="right"
+                      position="bottom"
                       text="Type to search users instantly. Filters by name, email, or role. Results update as you type."
                     />
                   </div>
@@ -554,7 +558,7 @@ export function HelpDialog({ onClose }) {
                     </svg>
                     <span>Add New User</span>
                     <FeatureAnnotation
-                      position="left"
+                      position="bottom"
                       text="Click to open Add User dialog. Enter user details: name, email, hourly rate, role, and status."
                     />
                   </button>
@@ -901,7 +905,7 @@ export function HelpDialog({ onClose }) {
       ui: (
         <div className="help-ui-preview jobs-preview">
           <div className="manage-jobs-page" style={{ position: "relative" }}>
-            <div className="page-header-single-line">
+            <div className="page-header-single-line" style={{ zIndex: 11 }}>
               <h1 className="page-title">Job Management</h1>
               <div
                 className="header-right-section"
@@ -942,7 +946,7 @@ export function HelpDialog({ onClose }) {
                       readOnly
                     />
                     <FeatureAnnotation
-                      position="left"
+                      position="bottom"
                       text="Type to search jobs. Filters by job name or status (Active/Inactive). Results update instantly."
                     />
                   </div>
@@ -969,7 +973,7 @@ export function HelpDialog({ onClose }) {
                     </svg>
                     <span>Add New Job</span>
                     <FeatureAnnotation
-                      position="left"
+                      position="bottom"
                       text="Click to open Add Job dialog. Enter job name and select status (Active/Inactive)."
                     />
                   </button>

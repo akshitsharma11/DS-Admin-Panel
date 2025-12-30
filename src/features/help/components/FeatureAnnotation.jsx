@@ -6,15 +6,18 @@ import "./FeatureAnnotation.css";
  * Simple positioning relative to parent container
  */
 export function FeatureAnnotation({
-  position = "top", // top, bottom, left, right
+  position = "top", // top, bottom, left, right, top-right, top-left, bottom-right, bottom-left
   text,
   className = "",
+  style = {},
+  innerStyle = {},
 }) {
   return (
     <div
       className={`feature-annotation feature-annotation-${position} ${className}`}
+      style={style}
     >
-      <div className="annotation-tooltip">
+      <div className="annotation-tooltip" style={innerStyle}>
         <div className="annotation-icon">💡</div>
         <p className="annotation-text">{text}</p>
       </div>

@@ -5,6 +5,13 @@
   white-space: nowrap;
 }
 
+/* Ensure button annotation (in form-group sibling) has higher z-index */
+.form-group + div .feature-annotation,
+.login-button + .feature-annotation,
+.feature-annotation:last-of-type {
+  z-index: 10002 !important;
+}
+
 .annotation-tooltip {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -114,6 +121,62 @@
   border-top: 8px solid transparent;
   border-bottom: 8px solid transparent;
   border-right: 8px solid #764ba2;
+}
+
+/* Top-right position - tooltip above and to the right, arrow points down-left */
+.feature-annotation-top-right {
+  bottom: calc(100% + 10px);
+  right: 0;
+}
+
+.feature-annotation-top-right .annotation-arrow {
+  top: 100%;
+  right: 20px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #764ba2;
+}
+
+/* Top-left position - tooltip above and to the left, arrow points down-right */
+.feature-annotation-top-left {
+  bottom: calc(100% + 10px);
+  left: 0;
+}
+
+.feature-annotation-top-left .annotation-arrow {
+  top: 100%;
+  left: 20px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #764ba2;
+}
+
+/* Bottom-right position - tooltip below and to the right, arrow points up-left */
+.feature-annotation-bottom-right {
+  top: calc(100% + 10px);
+  right: 0;
+}
+
+.feature-annotation-bottom-right .annotation-arrow {
+  bottom: 100%;
+  right: 20px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #764ba2;
+}
+
+/* Bottom-left position - tooltip below and to the left, arrow points up-right */
+.feature-annotation-bottom-left {
+  top: calc(100% + 10px);
+  left: 0;
+}
+
+.feature-annotation-bottom-left .annotation-arrow {
+  bottom: 100%;
+  left: 20px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #764ba2;
 }
 
 /* Highlight overlay for annotated elements */
